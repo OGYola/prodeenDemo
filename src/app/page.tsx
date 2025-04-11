@@ -13,6 +13,9 @@ import {
 // Replace individual imports with the main Blueprint component
 import Blueprint from "@/components/Blueprint"
 
+// Define the API URL from environment variable with fallback to localhost for development
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
 // Define the blueprint data structure
 interface BlueprintData {
   product_brief: any | null;
