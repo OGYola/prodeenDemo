@@ -112,7 +112,7 @@ export default function HomePage() {
     }
 
     // Create new connection
-    const newEventSource = new EventSource(`http://localhost:8000/stream/${reqId}`);
+    const newEventSource = new EventSource(`${API_URL}/stream/${reqId}`);
 
     // Handle incoming events
     newEventSource.onmessage = (event) => {
@@ -172,7 +172,7 @@ export default function HomePage() {
 
     try {
       // Step 1: Start the generation process and get request ID
-      const response = await fetch("http://localhost:8000/generate", {
+      const response = await fetch(`${API_URL}/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ idea })
