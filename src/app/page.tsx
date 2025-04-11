@@ -14,7 +14,7 @@ import {
 import Blueprint from "@/components/Blueprint"
 
 // Define the API URL from environment variable with fallback to localhost for development
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_URL = "https://prodeen-demo-api-production.up.railway.app"
 
 // Define the blueprint data structure
 interface BlueprintData {
