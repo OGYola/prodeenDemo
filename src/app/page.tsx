@@ -30,13 +30,13 @@ export default function HomePage() {
   const [completedSteps, setCompletedSteps] = useState<number[]>([])
   const [stepErrors, setStepErrors] = useState<number[]>([])
   const [blueprintData, setBlueprintData] = useState<BlueprintData | null>(null)
-  
+
   // Current request ID for the streaming connection
   const [requestId, setRequestId] = useState<string | null>(null)
-  
+
   // Reference to the SSE connection
   const [eventSource, setEventSource] = useState<EventSource | null>(null)
-  
+
   // Mapping of component names to step indices
   const componentToStepIndex: Record<string, number> = {
     "product_brief": 0,
@@ -45,7 +45,7 @@ export default function HomePage() {
     "content_strategy": 3,
     "compliance_check": 4
   }
-  
+
   // Clean up SSE connection on unmount
   useEffect(() => {
     return () => {
@@ -69,13 +69,13 @@ export default function HomePage() {
           [component]: data
         };
       }
-      
+
       return {
         ...prev,
         [component]: data
       };
     });
-    
+
     // Mark the component's step as completed
     const stepIndex = componentToStepIndex[component];
     if (stepIndex !== undefined) {
@@ -83,12 +83,12 @@ export default function HomePage() {
         if (prev.includes(stepIndex)) return prev;
         return [...prev, stepIndex];
       });
-      
+
       // Set as the active step
       setActiveStep(stepIndex);
     }
   };
-  
+
   // Handle component failures from SSE
   const handleComponentError = (component: string) => {
     // Mark the component's step as error
@@ -100,26 +100,26 @@ export default function HomePage() {
       });
     }
   };
-  
+
   // Set up SSE connection for real-time updates
   const setupSSEConnection = (reqId: string) => {
     // Close any existing connection
     if (eventSource) {
       eventSource.close();
     }
-    
+
     // Create new connection
     const newEventSource = new EventSource(`http://localhost:8000/stream/${reqId}`);
-    
+
     // Handle incoming events
     newEventSource.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        
+
         if (data.type === 'component_completed') {
           // Component successfully completed
           handleComponentUpdate(data.component, data.data);
-        } 
+        }
         else if (data.type === 'component_failed') {
           // Component failed
           handleComponentError(data.component);
@@ -139,14 +139,14 @@ export default function HomePage() {
         console.error("Error parsing SSE event:", e);
       }
     };
-    
+
     // Handle errors
     newEventSource.onerror = (error) => {
       console.error("SSE Connection error:", error);
       newEventSource.close();
       setIsGenerating(false);
     };
-    
+
     // Save the connection
     setEventSource(newEventSource);
   };
@@ -157,7 +157,7 @@ export default function HomePage() {
     setActiveStep(0)
     setCompletedSteps([])
     setStepErrors([])
-    
+
     // Initialize an empty blueprint object
     setBlueprintData({
       product_brief: null,
@@ -181,17 +181,17 @@ export default function HomePage() {
 
       const data = await response.json()
       const reqId = data.request_id;
-      
+
       if (!reqId) {
         throw new Error("No request ID returned from server");
       }
-      
+
       // Save the request ID
       setRequestId(reqId);
-      
+
       // Step 2: Set up SSE connection to get real-time updates
       setupSSEConnection(reqId);
-      
+
     } catch (error) {
       console.error("❌ Error:", error)
       alert("Something went wrong. Please try again.")
@@ -212,8 +212,8 @@ export default function HomePage() {
       complianceCheck: blueprintData.compliance_check
     }
 
-    return <Blueprint 
-      data={formattedData} 
+    return <Blueprint
+      data={formattedData}
       currentStep={activeStep}
       completedSteps={completedSteps}
       stepErrors={stepErrors}
@@ -232,7 +232,7 @@ export default function HomePage() {
           </div>
         </div>
       </header>
-  
+
       <section className="flex-1 py-12 sm:py-20">
         <div className="container mx-auto px-4">
           {/* Hero Section - Two equal columns */}
@@ -243,9 +243,9 @@ export default function HomePage() {
                 Got a new<br className="hidden sm:block" />CPG idea?
               </h1>
               <p className="text-lg text-blue-700 mb-6">
-              Our AI turns your idea into a retail-ready product plan — instantly.
+                Our AI turns your idea into a retail-ready product plan — instantly.
               </p>
-              
+
               {/* Input + Button with Animated Placeholder */}
               <Card className="bg-white/90 backdrop-blur-sm border-blue-100 shadow-md">
                 <CardContent className="p-6 space-y-5">
@@ -277,7 +277,7 @@ export default function HomePage() {
                 </CardContent>
               </Card>
             </div>
-            
+
             {/* Right Column - Larger Image with animation */}
             <div className="flex items-center justify-center">
               <div className="relative w-full">
@@ -291,7 +291,7 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-            
+
           {/* Results Display */}
           <div className="min-h-[300px]">
             {isGenerating && (!blueprintData || !Object.values(blueprintData).some(val => val !== null)) && (
@@ -307,7 +307,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-  
+
       <footer className="bg-white/80 backdrop-blur-sm py-4 border-t border-blue-100 mt-auto">
         <div className="container mx-auto px-4 text-center text-sm text-blue-600">
           © 2025 PRODEEN · All rights reserved

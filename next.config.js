@@ -1,14 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    output: 'export',
-    basePath: '/prodeenDemo',
-    assetPrefix: '/prodeenDemo',
-    trailingSlash: true,
-    images: { unoptimized: true },
-    // Add this to ensure CSS is processed correctly
-    webpack: (config) => {
-      return config;
-    },
+    // Remove the output: 'export' line
+    // Remove basePath and assetPrefix
   };
   
   module.exports = nextConfig;
